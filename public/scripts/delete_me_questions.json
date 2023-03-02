@@ -1,0 +1,223 @@
+{
+  "game_template": [
+    {
+      "questionType": "text",
+      "question": "What is the capital of France?",
+      "answers": [
+        {
+          "answerType": "text",
+          "content": "Paris",
+          "isCorrect": true
+        },
+        {
+          "answerType": "text",
+          "content": "London",
+          "isCorrect": false
+        },
+        {
+          "answerType": "text",
+          "content": "Berlin",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "questionType": "image",
+      "question": {
+        "imageSrc": "https://i.imgur.com/LUvtsbE.jpg",
+        "alt": "Image of a cat"
+      },
+      "answers": [
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/LUvtsbE.jpg",
+          "isCorrect": true
+        },
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/xpE0kSB.jpg",
+          "isCorrect": false
+        },
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/0bCudKy.jpg",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "questionType": "audio",
+      "question": {
+        "audioSrc": "https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_5MG.mp3",
+        "text": "What song is this?"
+      },
+      "answers": [
+        {
+          "answerType": "audio",
+          "content": "https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_5MG.mp3",
+          "isCorrect": true
+        },
+        {
+          "answerType": "audio",
+          "content": "https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3",
+          "isCorrect": false
+        },
+        {
+          "answerType": "audio",
+          "content": "https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_2MG.mp3",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "questionType": "video",
+      "question": {
+        "videoSrc": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "text": "What is this video?"
+      },
+      "answers": [
+        {
+          "answerType": "text",
+          "content": "Rick Astley - Never Gonna Give You Up",
+          "isCorrect": true
+        },
+        {
+          "answerType": "text",
+          "content": "Michael Jackson - Thriller",
+          "isCorrect": false
+        },
+        {
+          "answerType": "text",
+          "content": "Queen - Bohemian Rhapsody",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "questionType": "text",
+      "question": "Which of the following is a type of flower?",
+      "answers": [
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": true
+        },
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": false
+        },
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "questionType": "text",
+      "question": "Which of the following is a type of flower?",
+      "answers": [
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": true
+        },
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": false
+        },
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "questionType": "text",
+      "question": "Which of the following is a type of flower?",
+      "answers": [
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": true
+        },
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": false
+        },
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "questionType": "text",
+      "question": "Which of the following is a type of flower?",
+      "answers": [
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": true
+        },
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": false
+        },
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "questionType": "text",
+      "question": "Which of the following is a type of flower?",
+      "answers": [
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": true
+        },
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": false
+        },
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "questionType": "text",
+      "question": "Which of the following is a type of flower?",
+      "answers": [
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": true
+        },
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": false
+        },
+        {
+          "answerType": "image",
+          "content": "https://i.imgur.com/oNmMNCG.png",
+          "isCorrect": false
+        }
+      ]
+    }
+  ]
+}

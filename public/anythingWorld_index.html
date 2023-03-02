@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>My 3D Scene</title>
+</head>
+
+<body>
+    <label for="model-name">Model Name:</label>
+    <input type="text" id="model-name" />
+
+    <input type="text" id="code" />
+    <button id="uploadCodeButton" onclick="injectCode()">Upload Code</button>
+
+    <button onclick="window.loadModel()">Load Model</button>
+    <button id="recordButton">Record Audio</button>
+    <button id="stopButton" disabled>Stop Recording</button>
+    <button id="uploadButton">Upload Audio</button>
+    <button id="saveButton" disabled>Save Audio</button>
+
+    <canvas id="canvas"></canvas>
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
+    <script type="importmap">
+        {
+            "imports": {
+            "three": "https://unpkg.com/three/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three/examples/jsm/"
+            }
+        }
+    </script>
+    <script>
+        let recorder;
+        let chunks = [];
+
+        const recordButton = document.getElementById('recordButton');
+        const stopButton = document.getElementById('stopButton');
+        const uploadButton = document.getElementById('uploadButton');
+        // Add this code after the "uploadButton" event listener
+        const saveButton = document.getElementById('saveButton');
+        saveButton.addEventListener('click', () => {
+            const blob = new Blob(chunks, { type: 'audio/webm' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'recording.webm';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+
+        recordButton.addEventListener('click', async () => {
+            document.getElementById("model-name").value = "";
+            chunks = [];
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+            recorder.addEventListener('dataavailable', event => {
+                chunks.push(event.data);
+            });
+            recorder.start();
+            recordButton.disabled = true;
+            stopButton.disabled = false;
+        });
+
+        // Enable the saveButton when the recording is stopped
+        stopButton.addEventListener('click', () => {
+            recorder.stop();
+            recordButton.disabled = false;
+            stopButton.disabled = true;
+            uploadButton.disabled = false;
+            saveButton.disabled = false; // enable the save button
+        });
+
+        uploadButton.addEventListener('click', async () => {
+            const data = {
+                name: "John",
+                age: 30,
+                city: "New York"
+            };
+            const jsonString = JSON.stringify(data);
+
+            const formData = new FormData();
+            formData.append('json', new Blob([jsonString], { type: 'application/json' }), 'ourjson.json');
+
+            const response = await fetch('/process-json', {
+                method: 'POST',
+                body: formData
+            });
+            let result = await response.text();
+            console.log("result:", result);
+        });
+        function injectCode() {
+            let code = document.getElementById("code").value;
+            if (!code) throw new Error("missing code");
+            console.log("test", code);
+            var injectedCode = new Function(code);
+            injectedCode(); // call the function to execute the injected code
+        }
+
+    </script>
+
+    <script type="module">
+        import * as THREE from 'https://unpkg.com/three/build/three.module.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // Set up the scene
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 5;
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.getElementById("canvas"),
+        });
+        renderer.setClearColor(new THREE.Color(0xeeeeee)); // set the background color
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const gltfLoader = new GLTFLoader();
+        const objLoader = new OBJLoader();
+        const controls = new OrbitControls(camera, renderer.domElement);
+
+        var light = new THREE.DirectionalLight(0xffffff, 10);
+        scene.add(light);
+
+        window.loadModel = function () {
+
+            //clear scene
+            // Iterate over all objects in the scene
+            scene.children.forEach(child => {
+                // Check if the object is a 3D model
+                if (child.type === 'Group' || child.type === 'Mesh') {
+                    // Remove the model from the scene
+                    scene.remove(child);
+                }
+            });
+
+            const modelName = document.getElementById("model-name").value;
+            /* if (/\s/.test(modelName)) {
+                console.log("please no spaces");
+                return;
+            } */
+
+            // Make the API request to get the object
+            const url = `https://api.anything.world/anything?key=J4T9AEZ-Q894BBX-GBJ0EBV-MJ5Z50N&name=${modelName}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+
+                    console.log(data);
+                    if (data.code === "Model not found") throw new Error("Could not find object");
+
+                    let mode = "gltf";
+
+                    if (!data[0].model.formats) {
+                        console.log("no gltf file");
+                        mode = "obj";
+                    }
+
+                    // Load the GLTF into the scene
+                    if (mode === 'gltf') {
+                        gltfLoader.load(
+                            data[0].model.formats.GLTF2,
+                            function (gltf) {
+                                console.log(gltf);
+                                const model = gltf.scene;
+
+                                // Center and resize the model
+                                const box = new THREE.Box3().setFromObject(model);
+                                const size = new THREE.Vector3();
+                                box.getSize(size);
+                                const center = new THREE.Vector3();
+                                box.getCenter(center);
+                                model.position.sub(center);
+                                const maxDim = Math.max(size.x, size.y, size.z);
+                                camera.position.set(0, 0, maxDim * 2);
+                                controls.target.set(0, 0, 0);
+
+                                scene.add(model);
+                            },
+                            undefined,
+                            function (error) {
+                                console.error(error);
+                            });
+                    }
+                    else //load objs
+                    {
+                        const parts = data[0].model.parts;
+                        const model = new THREE.Group();
+                        const promises = [];
+
+                        // Load each part of the model and add it to the parent object
+                        for (const partName in parts) {
+
+                            if (parts.hasOwnProperty(partName)) {
+                                const partUrl = parts[partName];
+                                console.log("part URL", partUrl);
+                                // Create a promise for loading the part
+                                const promise = new Promise((resolve, reject) => {
+                                    objLoader.load(partUrl, function (object) {
+                                        // Set the object's name to the part name
+                                        object.name = partName;
+
+                                        // Add the object to the parent group
+                                        model.add(object);
+
+                                        resolve();
+                                    }, undefined, function (error) {
+                                        console.error(error);
+                                        reject(error);
+                                    });
+                                });
+
+                                promises.push(promise);
+                            }
+                        }
+
+                        // Wait for all promises to resolve before adding the model to the scene
+                        Promise.all(promises).then(() => {
+                            // Center and resize the model
+                            const box = new THREE.Box3().setFromObject(model);
+                            const size = new THREE.Vector3();
+                            box.getSize(size);
+                            const center = new THREE.Vector3();
+                            box.getCenter(center);
+                            model.position.sub(center);
+                            const maxDim = Math.max(size.x, size.y, size.z);
+                            camera.position.set(0, 0, maxDim * 2);
+                            controls.target.set(0, 0, 0);
+
+                            scene.add(model);
+                        });
+
+                    }
+                });
+
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update(); // update the controls
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+
+</html>

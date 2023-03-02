@@ -1,0 +1,216 @@
+
+
+{
+  "game_template": [
+    {
+      "questionType": "text",
+      "question": "What is the center of an atom called?",
+      "answers": [
+        {
+          "answerType": "text",
+          "content": "Nucleus",
+          "isCorrect": true
+        },
+        {
+          "answerType": "text",
+          "content": "Proton",
+          "isCorrect": false
+        },
+        {
+          "answerType": "text",
+          "content": "Electron",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "questionType": "text",
+      "question": "Which of the following is NOT a state of matter?",
+      "answers": [
+        {
+          "answerType": "text",
+          "content": "Plasma",
+          "isCorrect": false
+        },
+        {
+          "answerType": "text",
+          "content": "Liquid",
+          "isCorrect": false
+        },
+        {
+          "answerType": "text",
+          "content": "Light",
+          "isCorrect": true
+        }
+      ]
+    },
+    {
+      "questionType": "text",
+      "question": "What is the smallest particle of matter?",
+      "answers": [
+        {
+          "answerType": "text",
+          "content": "Atom",
+          "isCorrect": false
+        },
+        {
+          "answerType": "text",
+          "content": "Electron",
+          "isCorrect": false
+        },
+        {
+          "answerType": "text",
+          "content": "Quark",
+          "isCorrect": true
+        }
+      ]
+    },
+    {
+      "questionType": "text",
+      "question": "Which planet in our solar system is known for its rings?",
+      "answers": [
+        {
+          "answerType": "text",
+          "content": "Mars",
+          "isCorrect": false
+        },
+        {
+          "answerType": "text",
+          "content": "Jupiter",
+          "isCorrect": false
+        },
+        {
+          "answerType": "text",
+          "content": "Saturn",
+          "isCorrect": true
+        }
+      ]
+    },
+    {
+      "questionType": "text",
+      "question": "What is the name of the force that pulls objects towards the center of the Earth?",
+      "answers": [
+        {
+          "answerType": "text",
+          "content": "Gravity",
+          "isCorrect": true
+        },
+        {
+          "answerType": "text",
+          "content": "Magnetism",
+          "isCorrect": false
+        },
+        {
+          "answerType": "text",
+          "content": "Friction",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "questionType": "text",
+      "question": "What is the name of the force that pulls objects towards the center of the Earth?",
+      "answers": [
+        {
+          "answerType": "text",
+          "content": "Gravity",
+          "isCorrect": true
+        },
+        {
+          "answerType": "text",
+          "content": "Magnetism",
+          "isCorrect": false
+        },
+        {
+          "answerType": "text",
+          "content": "Friction",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "questionType": "text",
+      "question": "What is the chemical symbol for gold?",
+      "answers": [
+        {
+          "answerType": "text",
+          "content": "Au",
+          "isCorrect": true
+        },
+        {
+          "answerType": "text",
+          "content": "Ag",
+          "isCorrect": false
+        },
+        {
+          "answerType": "text",
+          "content": "Cu",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "questionType": "text",
+      "question": "What is the largest planet in our solar system?",
+      "answers": [
+        {
+          "answerType": "text",
+          "content": "Jupiter",
+          "isCorrect": true
+        },
+        {
+          "answerType": "text",
+          "content": "Saturn",
+          "isCorrect": false
+        },
+        {
+          "answerType": "text",
+          "content": "Uranus",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "questionType": "text",
+      "question": "What is the capital of France?",
+      "answers": [
+        {
+          "answerType": "text",
+          "content": "Paris",
+          "isCorrect": true
+        },
+        {
+          "answerType": "text",
+          "content": "London",
+          "isCorrect": false
+        },
+        {
+          "answerType": "text",
+          "content": "Madrid",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "questionType": "text",
+      "question": "What is the smallest planet in our solar system?",
+      "answers": [
+        {
+          "answerType": "text",
+          "content": "Mercury",
+          "isCorrect": true
+        },
+        {
+          "answerType": "text",
+          "content": "Venus",
+          "isCorrect": false
+        },
+        {
+          "answerType": "text",
+          "content": "Mars",
+          "isCorrect": false
+        }
+      ]
+    }
+  ]
+}

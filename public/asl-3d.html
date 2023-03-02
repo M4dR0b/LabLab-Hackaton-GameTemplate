@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* Chatbot styles */
+        video {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            border-radius: 10px;
+            width: 500px;
+        }
+    </style>
+</head>
+<body>
+    <video src="assets/hello.mp4" id="sign-video" autoplay ></video>
+    <h4 id="text-sign">Sign Language</h4>
+
+    <script>
+        const existed_sings = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'after', 'again', 'against', 'age', 'all', 'alone', 'also', 'and', 'ask', 'at', 'b', 'be', 'beautiful', 'before', 'best', 'better', 'busy', 'but', 'bye', 'c', 'can', 'cannot', 'change', 'college', 'come', 'computer', 'd', 'day', 'distance', 'do not', 'do', 'does not', 'e', 'eat', 'engineer', 'f', 'fight', 'finish', 'from', 'g', 'glitter', 'go', 'god', 'gold', 'good', 'great', 'h', 'hand', 'hands', 'happy', 'hello', 'help', 'her', 'here', 'his', 'home', 'homepage', 'how', 'i', 'invent', 'it', 'j', 'k', 'keep', 'l', 'language', 'laugh', 'learn', 'm', 'me', 'more', 'my', 'n', 'name', 'next', 'not', 'now', 'o', 'of', 'on', 'our', 'out', 'p', 'pretty', 'q', 'r', 'right', 's', 'sad', 'safe', 'see', 'self', 'sign', 'sing', 'so', 'sound', 'stay', 'study', 't', 'talk', 'television', 'thank you', 'thank', 'that', 'they', 'this', 'those', 'time', 'to', 'type', 'u', 'us', 'v', 'w', 'walk', 'wash', 'way', 'we', 'welcome', 'what', 'when', 'where', 'which', 'who', 'whole', 'whose', 'why', 'will', 'with', 'without', 'words', 'work', 'world', 'wrong', 'x', 'y', 'you', 'your', 'yourself', 'z'];
+        let test_text = "Home 1 2 3"
+        const videoElement = document.getElementById('sign-video');
+        let text_list = test_text.split(" ")
+        text_list = text_list.map(str => str.toLowerCase());
+
+        let videoSources  = text_list.map(str => "assets/" + str + ".mp4");
+        let text = document.getElementById('text-sign')
+
+        let currentIndex = 0;
+        function playNextVideo() {
+            if (currentIndex >= videoSources.length) {
+                // End of the list, stop playing
+                videoElement.pause();
+                return;
+            }
+            if (!existed_sings.includes(text_list[currentIndex])) {
+                currentIndex++;
+                return;
+            }
+            videoElement.src = videoSources[currentIndex];
+            videoElement.play();
+            text.innerHTML = text_list[currentIndex]
+            currentIndex++;
+        }
+        videoElement.addEventListener('ended', () => {
+            playNextVideo();
+          });
+        // Play the first video
+        playNextVideo();
+    </script>
+
+</body>
+</html>
