@@ -19,3 +19,7 @@ localhost:3000
 Full-Video:
 
 [![YouTube Video](http://img.youtube.com/vi/cYkL4nJp4Oo/0.jpg)](http://www.youtube.com/watch?v=cYkL4nJp4Oo)
+
+
+![pipeline](https://user-images.githubusercontent.com/55927328/223277864-c69c41b2-6278-4397-9efb-a6e72d93078c.jpg)
+![team](https://user-images.githubusercontent.com/55927328/223277869-0e482fb8-63a6-41c3-88d4-1f88ada32f42.jpg)
