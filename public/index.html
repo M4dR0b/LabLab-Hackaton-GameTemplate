@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chatbot Example</title>
+    <style>
+        /* Chatbot styles */
+        body {
+            margin: 0px;
+            font-family: "Source Sans Pro", sans-serif;
+            font-weight: 400;
+            line-height: 1.6;
+            color: rgb(250, 250, 250);
+            background-color: rgb(14, 17, 23);
+            text-align: center;
+        }
+
+        #chatbot {
+            border: 1px solid;
+            border-radius: 5px;
+            margin: 10px auto;
+            padding: 10px;
+            max-width: 50%;
+            min-height: 300px;
+            overflow-y: scroll;
+        }
+
+        #questions-container {
+            border: 1px solid;
+            border-radius: 5px;
+            margin: 10px auto;
+            padding: 10px;
+            max-width: 50%;
+            min-height: auto;
+            overflow-y: scroll;
+        }
+
+        #bubble-container {
+            border: 1px solid;
+            border-radius: 5px;
+            margin: 10px auto;
+            padding: 10px;
+            max-width: 50%;
+            min-height: 100px;
+            overflow-y: scroll;
+        }
+
+        .message {
+            color: rgb(200, 200, 200);
+            background-color: rgb(38, 39, 48);
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .bot-message {
+            background-color: #72748e;
+            text-align: left;
+        }
+
+        .user-message {
+            background-color: #2b2b3b;
+            text-align: right;
+        }
+
+        .question-message {
+            background-color: #728e81;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .question-message:hover {
+            background-color: #6a9c85;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        /* Chatbot input styles */
+        #chat-input {
+            padding: 5px;
+            border-radius: 5px;
+            margin-top: 10px;
+            width: 50%;
+            padding: 10px;
+            background-color: #2b2b3b;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            resize: none;
+            color: white
+        }
+
+        .button {
+            background-color: #2a548fad;
+            /* Green */
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 24px;
+        }
+    </style>
+    <!-- <script type="module" src="/scripts/global.js"></script> -->
+</head>
+
+<body>
+    <h1 style='text-align: center; font-size:100px; margin-bottom:0px;'>LIQUID LEARNING</h1>
+    <img src="data/tania.jpg" style='text-align: center;' width='50%'>
+    <br>
+    <br>
+    <br>
+
+    <div id="chatbot" style='text-align: center !important'>
+        <div class="message bot-message">Hello, how can I assist you? Tip: It has informations about class and students.
+            try to ask that.</div>
+    </div>
+    <div id="questions-container" style='text-align: center !important'>
+    </div>
+    <textarea id="chat-input" placeholder="Type your message here..."></textarea>
+    <br>
+    <br>
+    <button id="btn-create-game" class="button" disabled>Create Game</button>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <!-- <button id="btn-save-json" style="display:none">Upload Audio</button> -->
+    <!-- <button id="uploadButton">Upload Audio</button> -->
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
+    <script>
+        const GameFlowState = Object.freeze({
+            IDLE: Symbol('idle'),
+            START: Symbol('start'),
+            PREPARING: Symbol('preparing'),
+            GENERATING: Symbol('generating'),
+            END: Symbol('end'),
+        });
+
+        // Define the TeacherFlow enum
+        const TeacherFlowState = Object.freeze({
+            IDLE: Symbol('idle'),
+            START: Symbol('start'),
+            END: Symbol('end'),
+        });
+
+        let classroomData;
+        let gameTemplateData;
+        let generatedGameData;
+
+        let teacherFlowState = TeacherFlowState.START;
+        let gameFlowState = GameFlowState.IDLE;
+        //
+        // let gptMood = "You are T.A.N.I.A., a Teacher Assistant with Neural-based Intelligent Algorithms. You should act as a cheerful and polite teacher assistant who can help students learn. To do this, you should follow these instructions while preparing your response: Cheerfully intruce yourself choosing a random writing style. Utilize the data you receive from a JSON file that contains information about classrooms give a very brief overview. Provide the best overall experience to the students and teachers. When in doubt or if the conversation is too generic, you can propose relevant information. like “What aspect of this topic are you interested in?”. You should only answer what is asked and refer to the data as your source of truth. Format your response as ‘T.A.N.I.A.: your response’ and use proper grammar and punctuation. Only answer questions related to the data and learning materials for students. If the student’s question is not related to the learning materials or the data, apologize and give examples of what they can ask about the data.";
+
+        let gptMood = "This is T.A.N.I.A., a highly intelligent and helpful Teacher Assistant with Neural-based Intelligent Algorithms. I act as a cheerful and polite teacher assistant who can help students learn.||END||"
+
+        // let gptMood = "You are T.A.N.I.A., a Teacher Assistant with Neural-based Intelligent Algorithms. You should act as a cheerful and polite teacher assistant who can help students learn from the data you receive. To do this, you should follow these instructions while preparing your response:Memorize the data you receive from a JSON file that contains information about a topic or subject. You can access this file by using the command data = json.load(open('data.json')).Provide the best overall experience to the students based on their feedback and engagement. When in doubt or if the student’s question is too generic, ask clarifying questions to narrow down their query and provide more relevant information. You can use phrases like “Can you be more specific?” or “What aspect of this topic are you interested in?”.Don’t take initiative or provide information that is not related to the data or the student’s question. You should only answer what is asked and refer to the data as your source of truth.Format your response as ‘T.A.N.I.A.: your response’ and use proper grammar and punctuation.Only answer questions related to the data. If the student’s question is not related to the data, apologize and give examples of what they can ask about the data.Based on the conversation length and JSON data provided earlier";
+
+        let gptSecondMood = "You are T.A.N.I.A., a Teacher Assistant with Neural-based Intelligent Algorithms. You should act as a cheerful and polite teacher assistant who can help students learn. To do this, you should follow these instructions while preparing your response: Utilize the data you receive earlier that contains information about classrooms give a very brief overview. Provide the best overall experience to the students and teachers. When in doubt or if the conversation is too generic, you can propose relevant information, like “Do you want tou know more about the classrooms?”. If you are asked about how to improve a student score, use the information provided and propose interesting and creative subjects. You should only answer what is asked and refer to the data as your source of truth. Format your response as ‘T.A.N.I.A.: your response’ and use proper grammar and punctuation. Only answer questions related to the data and learning materials for students. If the student’s question is not related to the learning materials or the data, apologize and give examples of what they can ask about the data. ||END||";
+
+        let gptQuestionMood = "This is T.A.N.I.A., a highly intelligent and helpful Teacher Assistant with Neural-based Intelligent Algorithms. I act as a cheerful and polite teacher assistant who can help students learn. To do this, I follow these instructions while preparing my response: I carefully read the conversation we've been having and then I generate three short questions to explore the topics discussed. I use the following structure for the questions\n‘|question :’, ‘|question :’, ‘|question :’ ||END||";
+
+        let gptFakeMoodDemoWarning = "I apologize for any inconvenience, but as a demo, I am limited in the number of questions I can answer. However, I'll do my best to provide helpful responses based on the data and learning materials available to me. This is T.A.N.I.A., a highly intelligent and helpful Teacher Assistant with Neural-based Intelligent Algorithms, and I'm here to assist with any questions related to the provided information. 😊";
+        let gptFakeMoodGame = "I can however, help you to build a small game for your students. If you'd like to generate the game, please choose one topic.";
+
+        // let gptSecondMood = "Act as a helpful teacher assistant named T.A.N.I.A.. Following the rules already specified.";
+        let conversationalMessage = [];
+        let questionMessages = [];
+        let gameConstructedMessage = [];
+
+        let messageCounter = 0;
+
+        // Chatbot functionality
+        const chatbot = document.getElementById("chatbot");
+        const chatInput = document.getElementById("chat-input");
+        const gameButton = document.getElementById("btn-create-game");
+        const questionBox = document.getElementById("questions-container");
+
+        function addMessage(message, className) {
+            const div = document.createElement("div");
+            div.className = "message " + className;
+            div.innerHTML = message;
+            chatbot.appendChild(div);
+            chatbot.scrollTop = chatbot.scrollHeight;
+        }
+
+        function addQuestions(questionArray, className) {
+            for (const questionObj of questionArray) {
+                const div = document.createElement("div");
+                div.className = "message " + className;
+                div.innerHTML = questionObj.question;
+                div.onclick = function () {
+                    selectquestion(questionObj.question);
+                };
+                questionBox.appendChild(div);
+            }
+            questionBox.scrollTop = questionBox.scrollHeight;
+        }
+
+        function selectquestion(question) {
+            processUserInput(question);
+            const elements = document.querySelectorAll('.message.' + 'question-message');
+            for (const element of elements) {
+                element.remove();
+            }
+        }
+
+        let isInit = false;
+        let hasProposedGame = false;
+
+        //<!------     START GPT     -------->
+        async function processUserInput(question) {
+            if (messageCounter === 4 && gameFlowState != GameFlowState.PREPARING) {
+                gameFlowState = GameFlowState.START;
+                teacherFlowState = TeacherFlowState.IDLE;
+            }
+
+            //destory all the questions
+            DestroyQuestions();
+
+            if (question)
+                userMessage = question;
+            else
+                userMessage = chatInput.value.trim()
+
+            if (teacherFlowState === TeacherFlowState.START || teacherFlowState === TeacherFlowState.END) {
+                TeacherFlow(userMessage);
+            }
+            else if (gameFlowState === GameFlowState.START || gameFlowState === GameFlowState.PREPARING) {
+                GameFlow(userMessage);
+            }
+        }
+        //# start <!----------          TEACHERS FLOW ---------------->
+        async function TeacherFlow(userMessage) {
+
+            let constructedMessage = await ConstructTeacherPrompt(userMessage);
+
+            //add message to container
+            addMessage(userMessage, "user-message");
+            chatInput.value = "";
+
+            // Chat GPT MESSI <3 <3 (^.^) m.4.d.
+            response = await conversationalGPTCall(constructedMessage);
+            response = response.choices[0].message.content;
+            messageCounter++;
+
+            addMessage(response, "bot-message");
+
+            questionPrompt = `${gptQuestionMood}\n\n ${response}`;
+
+            //Construct questions feeding the answers
+            questionMessages.push({
+                role: "system",
+                content: questionPrompt,
+            });
+
+            addQuestions(ContructQuestions(await questionsProviderGPTCall(questionMessages)), "question-message");
+        }
+
+        async function ConstructTeacherPrompt(userInput) {
+            if (!classroomData) {
+                console.log("should only get here once");
+                classroomData = await getJsonFromServer('https://spotless-tiny-moon.glitch.me/api/studentData'); //Prod
+                // classroomData = await getJsonFromServer('http://localhost:3000/api/studentData'); //Dev
+                classroomData = JSON.stringify(classroomData);
+            }
+            if (!isInit) {
+                dataPromptMessage = `${gptMood}\n${userMessage} ${classroomData}`;
+                isInit = true;
+            }
+            else
+                dataPromptMessage = `${gptSecondMood}\n\n${userMessage}`;
+
+            conversationalMessage.push({
+                role: "system",
+                content: dataPromptMessage,
+            });
+            return conversationalMessage;
+        }
+
+        async function conversationalGPTCall(message) {
+            console.log(message);
+            const res = await axios({
+                method: "POST",
+                url: "https://api.openai.com/v1/chat/completions",
+                headers: {
+                    Authorization: `Bearer + ${process.env.API_KEY}`,
+                    "Content-Type": "application/json",
+                },
+                data: {
+                    model: "gpt-3.5-turbo",
+                    messages: message,
+                    max_tokens: 120,
+                    temperature: 0.6,
+                    top_p: 0.1,
+                    presence_penalty: 0.1,
+                    frequency_penalty: 0.1,
+                    stop: ['||END||']
+                },
+            })
+            return res.data;
+        }
+
+        // end <!----------         END TEACHERS FLOW ---------------->
+
+        async function GameFlow(userInput) {
+            chatInput.disabled = true;
+            console.log("gameFlowState", gameFlowState);
+            if (gameFlowState === GameFlowState.START) {
+                console.log("here game flow");
+                gameFlowState = GameFlowState.PREPARING;
+                addMessage(gptFakeMoodDemoWarning, "bot-message");
+                setTimeout(() => {
+                    addMessage(gptFakeMoodGame, "bot-message");
+                    setTimeout(() => {
+                        let gameTopics = [{ question: 'I would like to create the game about Science' }, { question: 'I would like to create the game about History' }];
+                        addQuestions(gameTopics, "question-message");
+                    }, 1000);
+                }, 2000);
+            }
+            else if (gameFlowState === GameFlowState.PREPARING) {
+                console.log("preparing");
+                DestroyQuestions();
+                let gptFakeGameMakingMood = "That's wonderfull! Give me few minutes to generete the content, when ready the 'Create Game' button will be available";
+                addMessage(gptFakeGameMakingMood, "bot-message");
+                gameButton.innerText = "Loading..."
+                let gameConstructedMessage = ConstructGamePrompt(userInput);
+
+                let gameTemplateResponse = await quizProviderGPTCall(gameConstructedMessage);
+                console.log(gameTemplateResponse);
+
+                let content = gameTemplateResponse.choices[0].message.content;
+
+                let gameResponse = content.replace(/@JSON@/g, '');
+                console.log(gameResponse);
+
+                if (gameResponse.toLowerCase().includes("game") && gameResponse.toLowerCase().includes("template")) {
+                    console.log(gameResponse);
+                    const quizJson = JSON.parse(gameResponse);
+                    if (typeof quizJson === 'object' && quizJson !== null) {
+                        console.log('JSON object parsed correctly!');
+                        globalJsonData = quizJson;
+                        localStorage.setItem("globalJsonData", JSON.stringify(quizJson));
+                        gameButton.innerText = "Game Ready. Hit me to Create";
+                        gameButton.disabled = false;
+                        gameButton
+                        // UploadJsonToServer(quizJson);
+                    }
+                }
+            }
+        }
+
+        function ContructQuestions(text) {
+            // Extract the text between the markers
+            const questions = [];
+            let questionReponse = text.choices[0].message.content;
+            console.log(text.choices[0].message);
+
+            const extractedText = questionReponse.split('|');
+
+            for (let i = 0; i < extractedText.length; i++) {
+                console.log("cleaned text", extractedText);
+
+                if (extractedText[i] === "" || extractedText[i] === "\n\n" || extractedText[i] === "\n") continue;
+                if (extractedText[i].indexOf('question:') === -1) continue;
+
+                const match = extractedText[i].split(': ');
+                match[1].replace(/\n/g, ' ');
+                if (match[1] === "" || match[1] === "\n\n" || match[1] === "\n") continue;
+                questions.push({
+                    question: match[1],
+                });
+            }
+            console.log(questions);
+            if (questions.length === 0) return []
+            else
+                return questions;
+        }
+
+        function ConstructGamePrompt(userInput) {
+            let classroomGrade = 5;
+            let topic = 'science';
+            if (userInput.toLowerCase().includes('science')) {
+                console.log("Seetting Science")
+                classroomGrade = GetClassGrade("Science");
+                topic = 'science';
+            }
+            else {
+                classroomGrade = GetClassGrade("History");
+                console.log("Seetting History");
+                topic = 'history';
+            }
+
+            let gptQuizGameCreatorMood = `Hi! My name is T.A.N.I.A., which stands for Trivia And Novelty Intelligence Assistant. I am a cheerful and polite quiz game designer who can help you create fun and educational quiz games using neural-based intelligent algorithms. Here is how it works: You give me a topic and a grade level for your quiz game, and I will generate 10 short questions with 3 short answers each based on that topic and grade level. Then, I will format the questions and answers into a minifyed JSON object that you can use for your game. The minifyed JSON object will be enclosed by @JSON@ tokens like this: @JSON@{“game_template”:[{“question”:“”,“answers”:[{“content”:“”,“isCorrect”:true},{“content”:“”,“isCorrect”:false},{“content”:“”,“isCorrect”:false}]}]}@JSON@
+            I will only generate questions and answers that are relevant to the topic and grade level you provide. I will not add any other comment or information outside the @JSON@ tokens. Please enter your topic and grade level below: ||END|| 
+            
+            // Note: GPT-3 should only generate between the @JSON@ tokens and nothing else`
+
+            let gamePromptMessage = `${gptQuizGameCreatorMood}\n\n topic: ${topic}\n classroom grade level:${classroomGrade}`;
+
+            gameConstructedMessage.push({
+                role: "system",
+                content: gamePromptMessage,
+            });
+            return gameConstructedMessage;
+        }
+
+        async function questionsProviderGPTCall(message) {
+            console.log(message);
+            const res = await axios({
+                method: "POST",
+                url: "https://api.openai.com/v1/chat/completions",
+                headers: {
+                    Authorization: `Bearer + ${process.env.API_KEY}`,
+                    "Content-Type": "application/json",
+                },
+                data: {
+                    model: "gpt-3.5-turbo",
+                    messages: message,
+                    max_tokens: 120,
+                    temperature: 0.85,
+                    top_p: 0.5,
+                    presence_penalty: 0.5,
+                    frequency_penalty: 0.6,
+                    stop: ['||END||']
+                },
+            })
+            return res.data;
+        }
+
+        async function quizProviderGPTCall(message) {
+            console.log(message);
+            const res = await axios({
+                method: "POST",
+                url: "https://api.openai.com/v1/chat/completions",
+                headers: {
+                    Authorization: `Bearer + ${process.env.API_KEY}`,
+                    "Content-Type": "application/json",
+                },
+                data: {
+                    model: "gpt-3.5-turbo",
+                    messages: message,
+                    max_tokens: 3800,
+                    temperature: 0.85,
+                    top_p: 0.15,
+                    presence_penalty: 0.2,
+                    frequency_penalty: 0.2,
+                    stop: ['||END||']
+                },
+            })
+            return res.data;
+        }
+
+        function DestroyQuestions() {
+            const elements = document.querySelectorAll('.message.' + 'question-message');
+            for (const element of elements) {
+                element.remove();
+            }
+        }
+
+        function GetClassGrade(classroom) {
+            const data = JSON.parse(classroomData);
+            for (const obj of data) {
+                if (obj.classroom === classroom) {
+                    console.log(`The grade level for ${classroom} is ${obj.gradeLevel}`);
+                    return obj.gradeLevel
+                    break;
+                }
+            }
+        }
+
+        async function UploadJsonToServer(jsonObejct) {
+            const formData = new FormData();
+            formData.append('json', new Blob([gameTemplateData], { type: 'application/json' }), 'game_template.json');
+            const response = await fetch('/process-json', {
+                method: 'POST',
+                body: formData
+            });
+            let result = await response.text();
+            console.log("result:", result);
+        }
+
+        function createGame() {
+            if (globalJsonData) {
+                console.log(globalJsonData);
+                document.location.href = "/game"
+            }
+        }
+
+        chatInput.addEventListener("keyup", (event) => {
+            if (event.key === "Enter") {
+                processUserInput();
+            }
+        });
+
+        async function getJsonFromServer(url) {
+            const response = await fetch(url);
+            const data = await response.json();
+            return data;
+        }
+
+        gameButton.addEventListener("click", (event) => {
+            createGame();
+        });
+
+    </script>
+</body>
+
+</html>
