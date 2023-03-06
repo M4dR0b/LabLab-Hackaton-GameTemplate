@@ -12,7 +12,7 @@ localhost:3000
 
 //Have a nice conversation with T.A.N.I.A., a highly intelligent and helpful Teacher Assistant with Neural-based Intelligent Algorithms.
 
-//Please be mindful this are demo APIs with restrictions. To avoid exceptions, try not to make the requests to close in time to each others.
+//Please be mindful this are demo APIs with restrictions. To avoid exceptions, try not to make the requests too close to each others.
 
 //Please be mindfull if you try DALL-E, there's my API key in there, and I don't have many credits left :O
 
