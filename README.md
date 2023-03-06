@@ -1,4 +1,4 @@
-# LabLab-Hackaton-GameTemplate
+# LabLab-Hackaton-T.A.N.I.A
 
 C:\U\Rob>npm -v 9.5.0
 
