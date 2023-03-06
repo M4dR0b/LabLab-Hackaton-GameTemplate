@@ -23,3 +23,4 @@ Full-Video:
 
 ![pipeline](https://user-images.githubusercontent.com/55927328/223277864-c69c41b2-6278-4397-9efb-a6e72d93078c.jpg)
 ![team](https://user-images.githubusercontent.com/55927328/223277869-0e482fb8-63a6-41c3-88d4-1f88ada32f42.jpg)
+![pormpts](https://user-images.githubusercontent.com/55927328/223281848-6e0348bc-ed93-4278-bc75-8f69d58e7b7f.jpg)
